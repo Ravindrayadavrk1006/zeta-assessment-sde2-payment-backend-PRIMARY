@@ -1,0 +1,10 @@
+{
+    "application":{
+        "version": "0.0.1",
+        "name": "Pay-Curr",
+        "description": "payment app",
+        "shortly_base_url": "http://localhost:5000",
+        "host": "0.0.0.0",
+        "port": 5000
+    }
+}

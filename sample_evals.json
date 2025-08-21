@@ -1,0 +1,7 @@
+[
+  {"input": {"customerId":"c_123","amount":50,"currency":"USD","payeeId":"p1","idempotencyKey":"e1"}, "expected": "allow"},
+  {"input": {"customerId":"c_123","amount":200,"currency":"USD","payeeId":"p1","idempotencyKey":"e2"}, "expected": "review"},
+  {"input": {"customerId":"c_999","amount":999,"currency":"USD","payeeId":"p1","idempotencyKey":"e3"}, "expected": "block"},
+  {"input": {"customerId":"c_123","amount":150,"currency":"USD","payeeId":"p1","idempotencyKey":"e4"}, "expected": "review"},
+  {"input": {"customerId":"c_456","amount":10,"currency":"USD","payeeId":"p1","idempotencyKey":"e5"}, "expected": "allow"}
+]
