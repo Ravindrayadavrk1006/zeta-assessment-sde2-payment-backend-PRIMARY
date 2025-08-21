@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, Header, HTTPException
 import time
 from app.models import PaymentRequest, PaymentResponse, AgentStep
 from app.store import store
+# from app.agent import agent_decide_ai as agent_decide
 from app.agent import agent_decide
 from app.rate_limiter import rate_limiter
 from app.utils import generate_request_id, logger, redact_customer_id
@@ -67,3 +68,12 @@ def get_metrics():
         "decisionCounts": metrics["decisionCounts"],
         "p95LatencyMs": p95
     }
+
+
+
+if __name__ == "__main__":
+    import uvicorn
+    # Start FastAPI server with configuration
+    uvicorn.run(
+        app
+    )
