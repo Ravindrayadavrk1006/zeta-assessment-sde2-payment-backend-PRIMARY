@@ -1,10 +1,20 @@
 {
     "application":{
         "version": "0.0.1",
-        "name": "Pay-Curr",
+        "name": "Pay-Now",
         "description": "payment app",
-        "shortly_base_url": "http://localhost:5000",
-        "host": "0.0.0.0",
-        "port": 5000
+        "host": "127.0.0.1",
+        "port": 8000,
+        "API_KEY": "secret-test-key",
+        "RATE_LIMIT_PER_SECOND": 5,
+        "RATE_LIMIT_WINDOW": 1.0,
+        "MAX_PAYMENT_AMOUNT": 1000000.0,
+        "REVIEW_THRESHOLD": 100.0,
+        "LOCK_TIMEOUT": 5,
+        "REQUEST_TIMEOUT": 30,
+        "USE_AI_AGENT": false,
+        "GOOGLE_API_KEY": "your-google-api-key",
+        "LOG_LEVEL": "INFO",
+        "REDACT_PII": true
     }
 }

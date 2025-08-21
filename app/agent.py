@@ -106,18 +106,21 @@ def agent_decide(payment):
 
     decision = "allow"
 
-    if balance < payment.amount:
-        decision = "block"
-        reasons.append("insufficient_balance")
     if payment.amount > 100.0:
         decision = "review"
         reasons.append("amount_above_daily_threshold")
     if risk["recent_disputes"] > 0:
         decision = "review"
         reasons.append("recent_disputes")
+        
+    if balance < payment.amount:
+        decision = "block"
+        reasons.append("insufficient_balance")
 
     if decision == "allow":
         ok = store.reserve(payment.customerId, payment.amount)
+        if ok:
+            reasons.append("transaction_allowed")
         if not ok:
             decision = "block"
             reasons = ["insufficient_balance"]
@@ -170,17 +173,16 @@ tools = [
     create_case_tool
 ]
 
-os.environ["GOOGLE_API_KEY"] = "AIzaSyDYdu8b50EGP8vtZN-yrD8wGKAtJCl-7os"
 
-llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash",
-    temperature=0.0)
 
 def agent_decide_ai(payment):
     from .store import store
 
     trace = []
     reasons = []
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-1.5-flash",
+        temperature=0.0)
 
     agent = initialize_agent(
         tools,
@@ -243,9 +245,14 @@ def agent_decide_ai(payment):
     if "high_velocity" in analysis.lower():
         reasons.append("high_transaction_velocity")
     
-    # If no reasons were found but we have a review/block decision, add a generic reason
-    if decision in ["review", "block"] and not reasons:
-        reasons.append("ai_flagged_suspicious")
+    # Always ensure we have at least one reason
+    if not reasons:
+        if decision == "allow":
+            reasons.append("transaction_allowed")
+        elif decision == "review":
+            reasons.append("flagged_suspicious")
+        else:  # block
+            reasons.append("transaction_blocked")
 
     # For ALLOW decisions, verify balance can be reserved
     if decision == "allow":

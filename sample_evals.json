@@ -1,7 +1,79 @@
 [
-  {"input": {"customerId":"c_123","amount":50,"currency":"USD","payeeId":"p1","idempotencyKey":"e1"}, "expected": "allow"},
-  {"input": {"customerId":"c_123","amount":200,"currency":"USD","payeeId":"p1","idempotencyKey":"e2"}, "expected": "review"},
-  {"input": {"customerId":"c_999","amount":999,"currency":"USD","payeeId":"p1","idempotencyKey":"e3"}, "expected": "block"},
-  {"input": {"customerId":"c_123","amount":150,"currency":"USD","payeeId":"p1","idempotencyKey":"e4"}, "expected": "review"},
-  {"input": {"customerId":"c_456","amount":10,"currency":"USD","payeeId":"p1","idempotencyKey":"e5"}, "expected": "allow"}
+  {
+    "input": {
+      "customerId": "c_456",
+      "amount": 50,
+      "currency": "USD",
+      "payeeId": "pay_123",
+      "idempotencyKey": "idem_test_001"
+    },
+    "expected": "allow",
+    "description": "Small amount from clean account (150.0 balance, no risk signals) should be allowed"
+  },
+  {
+    "input": {
+      "customerId": "c_123",
+      "amount": 200,
+      "currency": "USD",
+      "payeeId": "pay_456",
+      "idempotencyKey": "idem_test_002"
+    },
+    "expected": "review",
+    "description": "Amount > 100.0 triggers review regardless of balance"
+  },
+  {
+    "input": {
+      "customerId": "new_customer1",
+      "amount": 80,
+      "currency": "USD",
+      "payeeId": "pay_789",
+      "idempotencyKey": "idem_new_001"
+    },
+    "expected": "allow",
+    "description": "New customer with default balance (100.0) can make small payment"
+  },
+  {
+    "input": {
+      "customerId": "new_customer2",
+      "amount": 150,
+      "currency": "USD",
+      "payeeId": "pay_321",
+      "idempotencyKey": "idem_new_002"
+    },
+    "expected": "review",
+    "description": "New customer payment > 100.0 triggers review"
+  },
+  {
+    "input": {
+      "customerId": "c_456",
+      "amount": 120,
+      "currency": "USD",
+      "payeeId": "pay_654",
+      "idempotencyKey": "idem_test_003"
+    },
+    "expected": "review",
+    "description": "Test account (150.0 balance) with amount > 100.0 triggers review"
+  },
+  {
+    "input": {
+      "customerId": "new_customer3",
+      "amount": 101,
+      "currency": "USD",
+      "payeeId": "pay_987",
+      "idempotencyKey": "idem_new_003"
+    },
+    "expected": "block",
+    "description": "New customer cannot pay more than default balance"
+  },
+  {
+    "input": {
+      "customerId": "c_123",
+      "amount": 301,
+      "currency": "USD",
+      "payeeId": "pay_111",
+      "idempotencyKey": "idem_test_004"
+    },
+    "expected": "block",
+    "description": "Amount > balance should be blocked"
+  }
 ]
