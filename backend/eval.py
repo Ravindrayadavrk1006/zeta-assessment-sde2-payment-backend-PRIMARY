@@ -1,6 +1,8 @@
 import json
 from fastapi.testclient import TestClient
-from server import app, API_KEY
+from server import app
+
+import config as settings
 from app.store import store
 from rich.console import Console
 from rich.table import Table
@@ -25,7 +27,7 @@ def run_evaluations():
 
     passed = 0
     for i, case in enumerate(cases, 1):
-        headers = {"X-API-Key": API_KEY}
+        headers = {"X-API-Key": settings.API_KEY}
         input_data = case["input"]
         customer_id = input_data["customerId"]
         

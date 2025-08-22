@@ -7,3 +7,4 @@ langchain-google-genai
 python-jose[cryptography]
 pytest 
 pytest-asyncio
+rich
