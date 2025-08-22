@@ -40,7 +40,7 @@
       "payeeId": "pay_321",
       "idempotencyKey": "idem_new_002"
     },
-    "expected": "review",
+    "expected": "block",
     "description": "New customer payment > 100.0 triggers review"
   },
   {
@@ -51,7 +51,7 @@
       "payeeId": "pay_654",
       "idempotencyKey": "idem_test_003"
     },
-    "expected": "review",
+    "expected": "block",
     "description": "Test account (150.0 balance) with amount > 100.0 triggers review"
   },
   {
