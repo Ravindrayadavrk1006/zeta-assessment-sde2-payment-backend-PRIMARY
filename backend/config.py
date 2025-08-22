@@ -25,7 +25,7 @@ USE_AI_AGENT = True if conf.get("USE_AI_AGENT") else False
 
 #NOTE: if USE_AI_AGENT is True, then GOOGLE_API_KEY should be provided in config.json
 if USE_AI_AGENT:
-    os.environ["GOOGLE_API_KEY"] = conf.get("GOOGLE_API_KEY", "AIzaSyDYdu8b50EGP8vtZN-yrD8wGKAtJCl-7os")
+    os.environ["GOOGLE_API_KEY"] = conf.get("GOOGLE_API_KEY", "yrD8wGKAtJCl-7os")
 # Logging
 LOG_LEVEL = conf.get("LOG_LEVEL", "INFO")
 REDACT_PII = conf.get("REDACT_PII", True)
