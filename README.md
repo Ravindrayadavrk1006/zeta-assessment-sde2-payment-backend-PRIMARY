@@ -4,6 +4,13 @@
 
 This project consists of a **FastAPI backend(Primary)** that provides AI-powered payment decision making, and a **simple React/Next.js frontend** that implements the core backend functionalities through an intuitive user interface.
 
+## 🎥 Demo Video
+
+**Watch the complete demo of this payment decision system in action:**
+
+📹 **[Demo Video - Zeta Assessment Payment System](https://drive.google.com/file/d/1pOWGNUs7yPsBhvN_l9rnSm5SRsa2X9GW/view?usp=sharing)**
+
+
 ### Backend Features (Primary)
 - **AI-Powered Payment Decisions**: Intelligent decision making using Google Generative AI(Code is written but right now using it's alternative similar function orchestrator) with fallback to rule-based logic
 - **Payment Processing API**: RESTful endpoint for payment decisions with comprehensive validation
