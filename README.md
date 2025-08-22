@@ -1,4 +1,16 @@
-# Backend in FastAPI(Primary)
+# Backend in FastAPI(Primary) + React/Next.js Frontend(Simple)
+
+## Overview
+
+This project consists of a **FastAPI backend(Primary)** that provides AI-powered payment decision making, and a **simple React/Next.js frontend** that implements the core backend functionalities through an intuitive user interface.
+
+### Frontend Features
+- **Payment Form**: Submit payment requests with amount, payee, customer ID, and currency
+- **Real-time Decisions**: View AI-powered payment decisions (Allow/Review/Block)
+- **Decision Reasons**: See detailed explanations for each decision
+- **Agent Trace**: Collapsible view of the AI agent's decision-making process
+- **Modern UI**: Built with TypeScript, Tailwind CSS, and responsive design
+- **Testing**: Comprehensive test coverage for all components
 
 ## How to Run Locally
 
@@ -32,6 +44,20 @@ Follow these steps to set up and run the backend project locally:
 
    - **The interactive API documentation is available at `http://127.0.0.1:8000/docs` (PREFER THIS FOR SWAGGER PAGE)**.
    - Open your browser or API client (e.g., Postman) and navigate to `http://127.0.0.1:8000`.
+
+4. **Run the Frontend (Optional)**
+   ```bash
+   # Navigate to the frontend directory
+   cd ../frontend
+   
+   # Install dependencies
+   npm install
+   
+   # Start the development server
+   npm run dev
+   ```
+   
+   The frontend will be available at `http://localhost:3000` and will connect to backend API.
    
 4. **Sample Curl call**
    ```
@@ -39,7 +65,7 @@ Follow these steps to set up and run the backend project locally:
          'http://127.0.0.1:8000/payments/decide' \
          -H 'accept: application/json' \
          -H 'x-api-key: secret-test-key' \
-         -H 'Content-Type: application/json' \
+         -H 'Content-Type: applicat ion/json' \
          -d '{
          "customerId": "UbWBxZhrcIs4v-2QRVAnCMIdzyaJ8Y1irMDzmn_V2cTBFJGYAG7MBqrVRWOJ3ZmCNw",
          "amount": 400,
@@ -125,6 +151,31 @@ Follow these steps to run the backend tests:
       ```bash
          pytest -v tests/
       ```
+
+---
+
+## Frontend Testing
+
+To run the frontend tests:
+
+1. **Navigate to the Frontend Directory**
+   ```bash
+   cd frontend
+   ```
+
+2. **Run Tests**
+   ```bash
+   # Run all tests
+   npm test
+   
+   # Run tests in watch mode
+   npm run test:watch
+   ```
+
+3. **Test Coverage**
+   - Tests cover form validation, submission, and result display
+   - All components are tested for proper rendering and user interactions
+   - 9 comprehensive tests ensure frontend reliability
 
 
 ---
