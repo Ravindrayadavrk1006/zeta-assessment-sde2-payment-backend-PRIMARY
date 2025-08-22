@@ -1,14 +1,15 @@
 import uuid
+import time
 from .store import store
 
 from langchain_core.tools import Tool
-
 from langchain.agents import initialize_agent, AgentType
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 import os 
 import json
+from typing import Any, Callable, Optional, Tuple
 
 def get_balance(customer_id: str):
     from .store import store
@@ -175,21 +176,62 @@ tools = [
 
 
 
+def retry_with_fallback(func, *args, max_retries=2, fallback=None):
+    """Helper function to retry operations with fallback"""
+    last_error = None
+    for attempt in range(max_retries):
+        try:
+            return func(*args)
+        except Exception as e:
+            last_error = e
+            if attempt < max_retries - 1:  # Don't sleep on last attempt
+                time.sleep(1 * (attempt + 1))  # Exponential backoff
+    
+    # If all retries failed and we have a fallback
+    if fallback:
+        try:
+            return fallback(*args)
+        except Exception as fallback_error:
+            raise Exception(f"Both main function and fallback failed. Main error: {last_error}, Fallback error: {fallback_error}")
+    
+    raise last_error
+
 def agent_decide_ai(payment):
     from .store import store
+    import time
 
     trace = []
     reasons = []
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-1.5-flash",
-        temperature=0.0)
+    
+    # Initialize LLM with retry logic
+    def init_llm():
+        return ChatGoogleGenerativeAI(
+            model="gemini-1.5-flash",
+            temperature=0.0
+        )
+    
+    try:
+        llm = retry_with_fallback(init_llm, max_retries=2)
+    except Exception as e:
+        trace.append({"step": "error", "detail": f"LLM initialization failed: {str(e)}"})
+        # Fallback to non-AI agent if LLM fails
+        return agent_decide(payment)
 
-    agent = initialize_agent(
-        tools,
-        llm,
-        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-        verbose=True
-    )
+    # Initialize agent with retry
+    def init_agent():
+        return initialize_agent(
+            tools,
+            llm,
+            agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+            verbose=True
+        )
+    
+    try:
+        agent = retry_with_fallback(init_agent, max_retries=2)
+    except Exception as e:
+        trace.append({"step": "error", "detail": f"Agent initialization failed: {str(e)}"})
+        # Fallback to non-AI agent if initialization fails
+        return agent_decide(payment)
 
     # Custom prompt that enforces tool usage and clear decision making
     custom_prompt = f"""You are a payment transaction agent. Use the provided tools to evaluate this payment:
@@ -222,15 +264,34 @@ def agent_decide_ai(payment):
 
     trace.append({"step": "plan", "detail": "Initiating payment evaluation process"})
 
-    # Let the agent make the decision using tools
-    analysis = agent.run(custom_prompt)
+    # Execute agent with retry and fallback
+    def execute_agent():
+        return agent.run(custom_prompt)
+
+    try:
+        analysis = retry_with_fallback(
+            execute_agent,
+            max_retries=2,
+            fallback=lambda: agent_decide(payment)[0]  # Use non-AI agent as fallback
+        )
+    except Exception as e:
+        trace.append({"step": "error", "detail": f"Agent execution failed: {str(e)}"})
+        return agent_decide(payment)  # Final fallback to non-AI agent
     
-    # Extract decision and reasons from AI analysis
+    # Extract decision and reasons from AI analysis with validation
     decision = "review"  # Default to review
-    if "DECISION: allow" in analysis.lower():
-        decision = "allow"
-    elif "DECISION: block" in analysis.lower():
-        decision = "block"
+    try:
+        if "DECISION: allow" in analysis.lower():
+            decision = "allow"
+        elif "DECISION: block" in analysis.lower():
+            decision = "block"
+    except Exception as e:
+        trace.append({"step": "error", "detail": f"Decision parsing failed: {str(e)}"})
+        # Fallback to analyzing the response in a more forgiving way
+        if "allow" in analysis.lower():
+            decision = "allow"
+        elif "block" in analysis.lower():
+            decision = "block"
     
     # Parse reasons from the AI's response
     reasons = []
