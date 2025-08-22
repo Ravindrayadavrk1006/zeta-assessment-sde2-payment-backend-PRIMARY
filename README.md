@@ -4,13 +4,17 @@
 
 This project consists of a **FastAPI backend(Primary)** that provides AI-powered payment decision making, and a **simple React/Next.js frontend** that implements the core backend functionalities through an intuitive user interface.
 
-### Frontend Features
-- **Payment Form**: Submit payment requests with amount, payee, customer ID, and currency
-- **Real-time Decisions**: View AI-powered payment decisions (Allow/Review/Block)
-- **Decision Reasons**: See detailed explanations for each decision
-- **Agent Trace**: Collapsible view of the AI agent's decision-making process
-- **Modern UI**: Built with TypeScript, Tailwind CSS, and responsive design
-- **Testing**: Comprehensive test coverage for all components
+### Backend Features (Primary)
+- **AI-Powered Payment Decisions**: Intelligent decision making using Google Generative AI(Code is written but right now using it's alternative similar function orchestrator) with fallback to rule-based logic
+- **Payment Processing API**: RESTful endpoint for payment decisions with comprehensive validation
+- **Risk Assessment Engine**: Multi-factor risk analysis including balance checks, velocity monitoring, and fraud detection
+- **Agent Trace System**: Detailed logging of decision-making steps and tool calls for transparency
+- **Rate Limiting & Security**: API key authentication, rate limiting per customer, and input sanitization
+- **Idempotency Support**: Prevents duplicate payment processing with unique request tracking
+- **Comprehensive Testing**: Full test coverage with pytest for all backend components
+- **Performance Monitoring**: Metrics endpoint with P95 latency tracking and request analytics
+- **Structured Logging**: Correlation IDs, PII redaction, and detailed audit trails
+- **Error Handling**: Graceful fallbacks, retry mechanisms, and detailed error reporting
 
 ## How to Run Locally
 
