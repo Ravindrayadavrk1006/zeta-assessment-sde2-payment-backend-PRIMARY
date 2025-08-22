@@ -119,7 +119,7 @@ Follow these steps to set up and run the backend project locally:
    ```
 ---
 
-## How to Run Tests
+## How to Run Backend Tests
 
 Follow these steps to run the backend tests:
 
@@ -155,32 +155,6 @@ Follow these steps to run the backend tests:
       ```bash
          pytest -v tests/
       ```
-
----
-
-## Frontend Testing
-
-To run the frontend tests:
-
-1. **Navigate to the Frontend Directory**
-   ```bash
-   cd frontend
-   ```
-
-2. **Run Tests**
-   ```bash
-   # Run all tests
-   npm test
-   
-   # Run tests in watch mode
-   npm run test:watch
-   ```
-
-3. **Test Coverage**
-   - Tests cover form validation, submission, and result display
-   - All components are tested for proper rendering and user interactions
-   - 9 comprehensive tests ensure frontend reliability
-
 
 ---
 
@@ -226,12 +200,7 @@ The diagram illustrates the flow of requests through the FastAPI server, the dec
 - **Reason**: Simplifies development and testing without requiring database setup.
 - **Trade-off**: Data is lost on server restarts, making it unsuitable for production environments. A persistent database like PostgreSQL would be needed for production.
 
-### 3. **Fallback to Non-AI Agent**
-- **Decision**: Added a fallback to the non-AI agent in case the AI agent fails.
-- **Reason**: Ensures reliability and continuity of service even if the AI model encounters issues.
-- **Trade-off**: The fallback logic may not leverage the full capabilities of the AI agent, potentially leading to less optimal decisions.
-
-### 4. **Simplified Security Measures**
+### 3. **Simplified Security Measures**
 - **Decision**: Focused on API key validation and input sanitization.
 - **Reason**: Prioritized basic security measures to meet project requirements within the given timeline.
 - **Trade-off**: Advanced security features like OAuth2 or JWT-based authentication were not implemented, which may be necessary for production-grade security.
