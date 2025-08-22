@@ -180,5 +180,7 @@ if __name__ == "__main__":
     import uvicorn
     # Start FastAPI server with configuration
     uvicorn.run(
-        app
+        app,
+        host =  settings.conf.get("host"),
+        port = settings.conf.get("port")
     )
