@@ -1,4 +1,4 @@
-# Backend(Primary)
+# Backend in FastAPI(Primary)
 
 ## How to Run Locally
 
@@ -198,3 +198,103 @@ The diagram illustrates the flow of requests through the FastAPI server, the dec
   - Validated fields like `customerId`, `amount`, and `currency`.
   - Enforced constraints such as minimum/maximum lengths and allowed patterns.
 - **Benefit**: Prevents invalid or malicious data from being processed, reducing the risk of errors and security vulnerabilities.
+
+---
+
+## Technical Implementation Notes
+
+### Performance Optimizations
+- **P95 Latency Improvements**:
+  - Implemented asynchronous endpoints using FastAPI's async/await
+  - Added in-memory caching for idempotency keys with TTL
+  - Used pre-validation with Pydantic models to fail fast on invalid requests
+  - Implemented token bucket rate limiting for better throughput control
+  - Metrics endpoint tracks p95 latency: `GET /metrics`
+
+- **Caching Strategy**:
+  ```python
+  def get_idempotency(self, key: str) -> Optional[Any]:
+      if key in self.idempotency and key in self.idempotency_expiry:
+          if datetime.now() < self.idempotency_expiry[key]:
+              return self.idempotency[key]
+  ```
+
+### Security Implementation
+- **PII Protection**:
+  - Implemented PII redaction in logs:
+    ```python
+    def redact_customer_id(cid: str) -> str:
+        return cid[:2] + "***" + (cid[-2:] if len(cid) > 4 else "")
+    ```
+  - Configurable PII redaction via `REDACT_PII` setting
+  - Sensitive fields identified and masked in structured logging
+
+- **Authentication & Authorization**:
+  - API key validation on all endpoints
+  - Rate limiting per customer ID
+  - Timeout controls for resource locks
+  - Input validation and sanitization using Pydantic
+
+### Observability Features
+- **Logging**:
+  - Structured JSON logging with correlation IDs
+  - Log levels configurable via `LOG_LEVEL` setting
+  - Automatic traceback capture for errors
+  ```python
+  structured_log("info", "payment_request_received", {
+      "request_id": request_id,
+      "customer_id": request.customerId,
+      "amount": str(request.amount)
+  })
+  ```
+
+- **Metrics**:
+  - Endpoint: `GET /metrics`
+  - Tracks:
+    - Total requests
+    - Decision counts by type
+    - P95 latency
+    - Error counts by type
+
+- **Request Tracing**:
+  - Correlation IDs for request tracking
+  - Agent trace for decision steps
+  - Performance timing for operations
+
+### Agent Implementation
+- **Tools & Integration**:
+  - Implemented tools for:
+    - Balance checking
+    - Risk signal analysis
+    - Case creation
+  
+- **Retry & Fallback Mechanism**:
+  ```python
+  def retry_with_fallback(func, *args, max_retries=2, fallback=None):
+      for attempt in range(max_retries):
+          try:
+              return func(*args)
+          except Exception as e:
+              if attempt < max_retries - 1:
+                  time.sleep(1 * (attempt + 1))
+      return fallback(*args) if fallback else raise
+  ```
+
+- **Guardrails**:
+  - Amount validation (0 < amount ≤ 1,000,000)
+  - Currency validation (USD, EUR, GBP, JPY)
+  - Balance checks before allowing transactions
+  - Rate limiting to prevent abuse
+  - Transaction timeout controls
+
+These technical implementations ensure robust performance, security, and observability while maintaining clean separation of concerns and proper error handling throughout the system.
+	```
+
+
+-------------------------------------------------------------------------
+## Screenshots
+
+All relevant screenshots related to the backend are stored in the `/screenshots` folder.  
+You can browse them directly for quick references to API flows, test results, and example input/outputs.
+
+
