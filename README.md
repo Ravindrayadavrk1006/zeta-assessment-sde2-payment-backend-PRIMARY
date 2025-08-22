@@ -1,4 +1,4 @@
-# Zeta Assessment Backend
+# Backend(Primary)
 
 ## How to Run Locally
 
@@ -30,10 +30,63 @@ Follow these steps to set up and run the backend project locally:
 
 3. **Access the API**
 
-   - The interactive API documentation is available at `http://127.0.0.1:8000/docs`.
+   - **The interactive API documentation is available at `http://127.0.0.1:8000/docs` (PREFER THIS FOR SWAGGER PAGE)**.
    - Open your browser or API client (e.g., Postman) and navigate to `http://127.0.0.1:8000`.
    
+4. **Sample Curl call**
+   ```
+      curl -X 'POST' \
+         'http://127.0.0.1:8000/payments/decide' \
+         -H 'accept: application/json' \
+         -H 'x-api-key: secret-test-key' \
+         -H 'Content-Type: application/json' \
+         -d '{
+         "customerId": "UbWBxZhrcIs4v-2QRVAnCMIdzyaJ8Y1irMDzmn_V2cTBFJGYAG7MBqrVRWOJ3ZmCNw",
+         "amount": 400,
+         "currency": "USD",
+         "payeeId": "o0aoGhgPItHpSbKzpVzePHizB0mW9QfvzljvXXcQ5x",
+         "idempotencyKey": "eb343"
+         }'
+   ```
+   #OUTPUT
+   ```
+      {
+         "decision": "block",
+         "reasons": [
+            "amount_above_daily_threshold",
+            "insufficient_balance"
+         ],
+         "agentTrace": [
+            {
+               "step": "plan",
+               "detail": "Check balance, risk, and limits",
+               "timestamp": "2025-08-22T12:40:07.821235"
+            },
+            {
+               "step": "tool:getBalance",
+               "detail": "balance=10.00",
+               "timestamp": "2025-08-22T12:40:07.821242"
+            },
+            {
+               "step": "tool:getRiskSignals",
+		               "detail": "{'recent_disputes': 0, 'device_change': False,  'velocity_check': {'last_24h_count': 0, 'last_24h_amount': 0.0}, 'location_risk': {'unusual_country': False, 'location_mismatch': False}, 'account_risk': {'account_age_days': 365, 'previous_failures': 0, 'suspicious_activity': False}, 'transaction_pattern': {'unusual_time': False, 'unusual_amount': False, 'high_risk_merchant': False}}",
+               "timestamp": "2025-08-22T12:40:07.821244"
+            },
+            {
+               "step": "tool:createCase",
+               "detail": "case_id=case_bfda08",
+               "timestamp": "2025-08-22T12:40:07.821246"
+            },
+            {
+               "step": "tool:recommend",
+               "detail": "block",
+               "timestamp": "2025-08-22T12:40:07.821250"
+            }
+         ],
+         "requestId": "req_8c76c3"
+         }
 
+   ```
 ---
 
 ## How to Run Tests
@@ -69,19 +122,9 @@ Follow these steps to run the backend tests:
 5. **View Test Results**
    - The test results will be displayed in the terminal.
    - Use the `-v` flag for more detailed output:
-     ```bash
-     pytest -v tests/
-     ```
-
-6. **Generate a Test Coverage Report** (optional):
-   ```bash
-   pytest --cov=app tests/
-   ```
-   - This will generate a coverage report for the `app` module.
-   - Install `pytest-cov` if not already installed:
-     ```bash
-     pip install pytest-cov
-     ```
+      ```bash
+         pytest -v tests/
+      ```
 
 
 ---
